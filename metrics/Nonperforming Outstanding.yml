@@ -9,3 +9,5 @@ unrelated_dimensions_handling: repeat
 format: $#,##0
 semi_additive:
   position: last
+  relationships:
+  - facility_to_snapshot_date

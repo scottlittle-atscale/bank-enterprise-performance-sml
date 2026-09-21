@@ -41,19 +41,31 @@ level_attributes:
   dataset: dim_date
   key_columns:
   - year_num
+  name_column: year_num
+  time_unit: year
+  sort_column: year_num
 - unique_name: Quarter
   label: Quarter
   dataset: dim_date
   key_columns:
   - quarter_name
+  name_column: quarter_name
+  time_unit: quarter
+  sort_column: quarter_name
 - unique_name: Month
   label: Month
   dataset: dim_date
   key_columns:
   - year_month
+  name_column: year_month
+  time_unit: month
+  sort_column: year_month
 - unique_name: Date
   label: Date
   dataset: dim_date
   key_columns:
   - date_id
   is_unique_key: true
+  name_column: date_id
+  time_unit: day
+  sort_column: date_id

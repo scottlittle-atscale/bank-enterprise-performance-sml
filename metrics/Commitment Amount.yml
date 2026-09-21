@@ -9,4 +9,6 @@ unrelated_dimensions_handling: repeat
 calculation_method: sum
 semi_additive:
   position: last
+  relationships:
+  - facility_to_snapshot_date
 format: $#,##0

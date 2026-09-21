@@ -35,7 +35,7 @@ four lines of business over seven conformed dimensions (constellation / galaxy s
 
 - **Additivity comes from the catalog, not inference.** Every metric's `calculation_method` is
   set from its OpenMetadata `BankGovernance.*` tag — see the mapping table under Generation summary.
-- **`${PROJECT}` / `${DATASET}` resolved to concrete values** (Rule 17). The DDL parameterizes both;
+- **the DDL's PROJECT / DATASET placeholders resolved to concrete values** (Rule 17). The DDL parameterizes both;
   emitted as `database: atscale-sales-demo`, `schema: BANK_ENTERPRISE_PERFORMANCE` per the use case.
 - **`current_balance` is tagged `semi-additive` but emitted WITHOUT a `semi_additive` block.**
   `fact_loan_origination` is a transaction grain (one row per loan booked) whose only date is
