@@ -1,0 +1,19 @@
+unique_name: Customer Segment Dimension
+object_type: dimension
+label: Customer Segment Dimension
+is_degenerate: true
+description: 'Relationship segmentation. Consumer: Mass Market, Mass Affluent, Private / HNW, Small Business.
+  Commercial: Middle Market, Corporate, Institutional.'
+hierarchies:
+- unique_name: Customer Segment Hierarchy
+  label: Customer Segment Hierarchy
+  filter_empty: 'yes'
+  levels:
+  - unique_name: Customer Segment
+level_attributes:
+- unique_name: Customer Segment
+  label: Customer Segment
+  dataset: fact_deposit_snapshot
+  key_columns:
+  - customer_segment
+  name_column: customer_segment

@@ -1,0 +1,9 @@
+unique_name: Interest Rate
+object_type: metric
+label: Interest Rate
+dataset: fact_loan_origination
+column: interest_rate_pct
+description: Note rate on a consumer loan, in percent. Ratio; average across loans, never sum.
+unrelated_dimensions_handling: repeat
+calculation_method: average
+format: '#,##0.00##'

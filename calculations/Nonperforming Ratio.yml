@@ -1,0 +1,7 @@
+unique_name: Nonperforming Ratio
+object_type: metric_calc
+label: Nonperforming Ratio
+description: Non-performing outstanding balance as a share of total outstanding balance.
+expression: CASE WHEN ISEMPTY([Measures].[Outstanding Balance]) THEN NULL ELSE [Measures].[Nonperforming
+  Outstanding] / [Measures].[Outstanding Balance] END
+format: '#,##0.0%'

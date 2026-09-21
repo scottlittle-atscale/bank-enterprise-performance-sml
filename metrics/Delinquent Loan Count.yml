@@ -1,0 +1,9 @@
+unique_name: Delinquent Loan Count
+object_type: metric
+label: Delinquent Loan Count
+dataset: fact_loan_origination
+column: is_delinquent
+description: Consumer loans with days_past_due > 0.
+calculation_method: sum
+unrelated_dimensions_handling: repeat
+format: '#,##0'

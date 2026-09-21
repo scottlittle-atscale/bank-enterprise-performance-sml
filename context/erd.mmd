@@ -1,0 +1,122 @@
+%% bank_enterprise_performance — unified enterprise constellation (galaxy) schema.
+%% 7 conformed dimensions shared across 4 fact tables. PK/FK are NOT ENFORCED in
+%% BigQuery; the relationships below are the intended joins for the semantic model.
+erDiagram
+    dim_date ||--o{ fact_deposit_snapshot : snapshot_date
+    dim_date ||--o{ fact_loan_origination : origination_date
+    dim_date ||--o{ fact_payment_transaction : activity_month
+    dim_date ||--o{ fact_loan_facility_snapshot : snapshot_date
+
+    dim_line_of_business ||--o{ dim_product : lob_id
+    dim_line_of_business ||--o{ fact_loan_facility_snapshot : lob_id
+
+    dim_market ||--o{ dim_branch : market_id
+    dim_market ||--o{ fact_deposit_snapshot : market_id
+    dim_market ||--o{ fact_loan_origination : market_id
+
+    dim_branch ||--o{ fact_deposit_snapshot : branch_id
+    dim_branch ||--o{ fact_loan_origination : branch_id
+
+    dim_product ||--o{ fact_deposit_snapshot : product_id
+    dim_product ||--o{ fact_loan_origination : product_id
+    dim_product ||--o{ fact_payment_transaction : product_id
+    dim_product ||--o{ fact_loan_facility_snapshot : product_id
+
+    dim_customer ||--o{ fact_loan_origination : customer_id
+    dim_customer ||--o{ fact_payment_transaction : customer_id
+    dim_customer ||--o{ fact_loan_facility_snapshot : customer_id
+
+    dim_risk_rating ||--o{ fact_loan_facility_snapshot : risk_rating_id
+
+    dim_date {
+        DATE date_id PK
+        STRING year_month
+        STRING quarter_name
+        INT64 year_num
+        BOOL is_month_end
+    }
+    dim_line_of_business {
+        INT64 lob_id PK
+        STRING lob_name
+        STRING segment
+    }
+    dim_market {
+        INT64 market_id PK
+        STRING market_name
+        STRING state
+        STRING region
+    }
+    dim_branch {
+        INT64 branch_id PK
+        STRING branch_name
+        STRING branch_type
+        INT64 market_id FK
+        STRING region
+    }
+    dim_product {
+        INT64 product_id PK
+        STRING product_name
+        STRING product_category
+        STRING line_of_business
+        INT64 lob_id FK
+    }
+    dim_risk_rating {
+        INT64 risk_rating_id PK
+        STRING rating_grade
+        STRING regulatory_class
+        BOOL is_nonperforming
+    }
+    dim_customer {
+        INT64 customer_id PK
+        STRING customer_type
+        STRING segment
+        STRING industry_vertical
+        STRING region
+    }
+    fact_deposit_snapshot {
+        INT64 deposit_snapshot_id PK
+        DATE snapshot_date FK
+        INT64 branch_id FK
+        INT64 market_id FK
+        INT64 product_id FK
+        STRING customer_segment
+        NUMERIC eom_balance
+        INT64 account_count
+        INT64 accounts_closed
+        NUMERIC interest_expense_mtd
+    }
+    fact_loan_origination {
+        INT64 loan_id PK
+        DATE origination_date FK
+        INT64 customer_id FK
+        INT64 branch_id FK
+        INT64 market_id FK
+        INT64 product_id FK
+        NUMERIC loan_amount
+        FLOAT64 interest_rate_pct
+        STRING vintage
+        STRING delinquency_status
+    }
+    fact_payment_transaction {
+        INT64 payment_id PK
+        DATE activity_month FK
+        INT64 customer_id FK
+        INT64 product_id FK
+        INT64 transaction_count
+        NUMERIC payment_volume_usd
+        NUMERIC fee_revenue_usd
+    }
+    fact_loan_facility_snapshot {
+        INT64 facility_snapshot_id PK
+        DATE snapshot_date FK
+        INT64 facility_id
+        INT64 customer_id FK
+        INT64 product_id FK
+        INT64 lob_id FK
+        INT64 risk_rating_id FK
+        NUMERIC commitment_amount
+        NUMERIC outstanding_balance
+        NUMERIC interest_income_mtd
+        FLOAT64 nim_bps
+        BOOL is_nonperforming
+    }

@@ -1,0 +1,8 @@
+unique_name: Payment Fee Revenue Year to Date
+object_type: metric_calc
+label: Payment Fee Revenue Year to Date
+description: Commercial payments fee revenue, year to date on the Activity date role-play.
+expression: CASE WHEN ISEMPTY([Measures].[Payment Fee Revenue]) THEN NULL ELSE Aggregate(PeriodsToDate([Activity
+  Date Dimension].[Activity Date Hierarchy].[Activity Year], [Activity Date Dimension].[Activity Date
+  Hierarchy].CurrentMember), [Measures].[Payment Fee Revenue]) END
+format: $#,##0

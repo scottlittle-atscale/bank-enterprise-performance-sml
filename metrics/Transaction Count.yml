@@ -1,0 +1,9 @@
+unique_name: Transaction Count
+object_type: metric
+label: Transaction Count
+dataset: fact_payment_transaction
+column: transaction_count
+description: Number of payment transactions in the activity month. Additive period flow.
+unrelated_dimensions_handling: repeat
+calculation_method: sum
+format: '#,##0'

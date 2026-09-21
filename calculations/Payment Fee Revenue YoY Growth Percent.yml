@@ -1,0 +1,8 @@
+unique_name: Payment Fee Revenue YoY Growth Percent
+object_type: metric_calc
+label: Payment Fee Revenue YoY Growth Percent
+description: Year-over-year growth in commercial payments fee revenue.
+expression: CASE WHEN ISEMPTY([Measures].[Payment Fee Revenue Prior Year]) THEN NULL ELSE ([Measures].[Payment
+  Fee Revenue] - [Measures].[Payment Fee Revenue Prior Year]) / [Measures].[Payment Fee Revenue Prior
+  Year] END
+format: '#,##0.0%'

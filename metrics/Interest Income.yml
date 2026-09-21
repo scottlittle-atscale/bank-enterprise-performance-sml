@@ -1,0 +1,9 @@
+unique_name: Interest Income
+object_type: metric
+label: Interest Income
+dataset: fact_loan_facility_snapshot
+column: interest_income_mtd
+description: Interest income accrued on a facility during the month. Additive period flow.
+unrelated_dimensions_handling: repeat
+calculation_method: sum
+format: $#,##0

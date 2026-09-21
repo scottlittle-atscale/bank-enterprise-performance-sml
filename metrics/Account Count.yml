@@ -1,0 +1,12 @@
+unique_name: Account Count
+object_type: metric
+label: Account Count
+dataset: fact_deposit_snapshot
+column: account_count
+description: Number of open deposit accounts as of the snapshot. Semi-additive point-in-time count; do
+  not sum across months.
+unrelated_dimensions_handling: repeat
+calculation_method: sum
+semi_additive:
+  position: last
+format: '#,##0'

@@ -1,0 +1,18 @@
+unique_name: FICO Band Dimension
+object_type: dimension
+label: FICO Band Dimension
+is_degenerate: true
+description: FICO Band (fact-resident degenerate dimension).
+hierarchies:
+- unique_name: FICO Band Hierarchy
+  label: FICO Band Hierarchy
+  filter_empty: 'yes'
+  levels:
+  - unique_name: FICO Band
+level_attributes:
+- unique_name: FICO Band
+  label: FICO Band
+  dataset: fact_loan_origination
+  key_columns:
+  - fico_band
+  name_column: fico_band

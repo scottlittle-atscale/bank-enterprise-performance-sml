@@ -1,0 +1,13 @@
+unique_name: End-of-Month Balance
+object_type: metric
+label: End-of-Month Balance
+dataset: fact_deposit_snapshot
+column: eom_balance
+description: 'Deposit ledger balance as of the month-end snapshot date. Semi-additive: valid to sum across
+  branches, products, and segments within a snapshot, but never across snapshot dates. Read as-of the
+  latest snapshot.'
+unrelated_dimensions_handling: repeat
+calculation_method: sum
+semi_additive:
+  position: last
+format: $#,##0

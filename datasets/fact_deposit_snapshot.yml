@@ -1,0 +1,32 @@
+unique_name: fact_deposit_snapshot
+object_type: dataset
+label: fact_deposit_snapshot
+connection_id: bank_enterprise_performance_bq
+table: fact_deposit_snapshot
+columns:
+- name: deposit_snapshot_id
+  data_type: long
+- name: snapshot_date
+  data_type: date
+- name: branch_id
+  data_type: long
+- name: market_id
+  data_type: long
+- name: product_id
+  data_type: long
+- name: customer_segment
+  data_type: string
+- name: eom_balance
+  data_type: decimal
+- name: avg_daily_balance
+  data_type: decimal
+- name: account_count
+  data_type: long
+- name: accounts_opened
+  data_type: long
+- name: accounts_closed
+  data_type: long
+- name: interest_expense_mtd
+  data_type: decimal
+description: Retail Deposits (Consumer Bank). Monthly snapshot at branch x deposit-product x customer-segment.
+  Balances are semi-additive; opened/closed/interest are additive period flows.

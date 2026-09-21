@@ -1,0 +1,37 @@
+unique_name: fact_loan_facility_snapshot
+object_type: dataset
+label: fact_loan_facility_snapshot
+connection_id: bank_enterprise_performance_bq
+table: fact_loan_facility_snapshot
+columns:
+- name: facility_snapshot_id
+  data_type: long
+- name: snapshot_date
+  data_type: date
+- name: facility_id
+  data_type: long
+- name: customer_id
+  data_type: long
+- name: product_id
+  data_type: long
+- name: lob_id
+  data_type: long
+- name: risk_rating_id
+  data_type: long
+- name: commitment_amount
+  data_type: decimal
+- name: outstanding_balance
+  data_type: decimal
+- name: undrawn_amount
+  data_type: decimal
+- name: interest_income_mtd
+  data_type: decimal
+- name: nim_bps
+  data_type: double
+- name: is_nonperforming
+  data_type: boolean
+- name: nonperforming_outstanding
+  data_type: decimal
+  sql: CASE WHEN is_nonperforming THEN outstanding_balance ELSE 0 END
+description: CRE &#43; Middle Market Lending (Commercial Bank). Monthly snapshot per facility. commitment/outstanding/undrawn
+  are semi-additive; interest_income_mtd is an additive flow; nim_bps is a ratio.

@@ -1,0 +1,10 @@
+unique_name: Net Interest Margin bps
+object_type: metric
+label: Net Interest Margin bps
+dataset: fact_loan_facility_snapshot
+column: nim_bps
+description: Net interest margin in basis points for a facility. Ratio; aggregate with average, never
+  sum.
+unrelated_dimensions_handling: repeat
+calculation_method: average
+format: '#,##0.00##'

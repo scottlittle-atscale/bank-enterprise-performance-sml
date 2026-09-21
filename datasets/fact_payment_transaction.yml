@@ -1,0 +1,22 @@
+unique_name: fact_payment_transaction
+object_type: dataset
+label: fact_payment_transaction
+connection_id: bank_enterprise_performance_bq
+table: fact_payment_transaction
+columns:
+- name: payment_id
+  data_type: long
+- name: activity_month
+  data_type: date
+- name: customer_id
+  data_type: long
+- name: product_id
+  data_type: long
+- name: transaction_count
+  data_type: long
+- name: payment_volume_usd
+  data_type: decimal
+- name: fee_revenue_usd
+  data_type: decimal
+description: Commercial Payments (Commercial Bank). Monthly aggregate at commercial-client x payments-product.
+  All measures are additive period flows.

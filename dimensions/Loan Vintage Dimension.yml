@@ -1,0 +1,18 @@
+unique_name: Loan Vintage Dimension
+object_type: dimension
+label: Loan Vintage Dimension
+is_degenerate: true
+description: Origination year-month (YYYY-MM) cohort of a loan; used for vintage delinquency curves.
+hierarchies:
+- unique_name: Loan Vintage Hierarchy
+  label: Loan Vintage Hierarchy
+  filter_empty: 'yes'
+  levels:
+  - unique_name: Loan Vintage
+level_attributes:
+- unique_name: Loan Vintage
+  label: Loan Vintage
+  dataset: fact_loan_origination
+  key_columns:
+  - vintage
+  name_column: vintage

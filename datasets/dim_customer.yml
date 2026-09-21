@@ -1,0 +1,28 @@
+unique_name: dim_customer
+object_type: dataset
+label: dim_customer
+connection_id: bank_enterprise_performance_bq
+table: dim_customer
+columns:
+- name: customer_id
+  data_type: long
+- name: customer_key
+  data_type: string
+- name: customer_name
+  data_type: string
+- name: customer_type
+  data_type: string
+- name: segment
+  data_type: string
+- name: industry_vertical
+  data_type: string
+- name: revenue_band
+  data_type: string
+- name: region
+  data_type: string
+- name: state
+  data_type: string
+- name: acquisition_date
+  data_type: date
+description: Conformed customer dimension; 58,000 customers (50,000 consumer &#43; 8,000 commercial).
+  Consumer vs Commercial customer_type; segment, industry_vertical and revenue_band curated for commercial.

@@ -1,0 +1,18 @@
+unique_name: dim_product
+object_type: dataset
+label: dim_product
+connection_id: bank_enterprise_performance_bq
+table: dim_product
+columns:
+- name: product_id
+  data_type: long
+- name: product_name
+  data_type: string
+- name: product_category
+  data_type: string
+- name: line_of_business
+  data_type: string
+- name: lob_id
+  data_type: long
+description: Conformed product dimension across all four lines of business. product_category groups products;
+  snowflakes to dim_line_of_business via lob_id.

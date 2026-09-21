@@ -1,0 +1,8 @@
+unique_name: End-of-Month Balance YoY Growth Percent
+object_type: metric_calc
+label: End-of-Month Balance YoY Growth Percent
+description: Year-over-year growth in deposit end-of-month balance.
+expression: CASE WHEN ISEMPTY([Measures].[End-of-Month Balance Prior Year]) THEN NULL ELSE ([Measures].[End-of-Month
+  Balance] - [Measures].[End-of-Month Balance Prior Year]) / [Measures].[End-of-Month Balance Prior Year]
+  END
+format: '#,##0.0%'

@@ -1,0 +1,10 @@
+unique_name: Current Loan Balance
+object_type: metric
+label: Current Loan Balance
+dataset: fact_loan_origination
+column: current_balance
+description: Outstanding principal on a consumer loan as of the current month. As-of state per loan, not
+  a monthly roll-forward.
+unrelated_dimensions_handling: repeat
+calculation_method: sum
+format: $#,##0

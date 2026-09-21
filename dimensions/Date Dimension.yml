@@ -1,0 +1,59 @@
+unique_name: Date Dimension
+object_type: dimension
+label: Date Dimension
+type: time
+description: Conformed calendar date dimension spanning 2023-07-01 to 2026-06-30. is_month_end flags the
+  snapshot dates used by the balance facts.
+hierarchies:
+- unique_name: Date Hierarchy
+  label: Date Hierarchy
+  filter_empty: 'yes'
+  levels:
+  - unique_name: Year
+  - unique_name: Quarter
+    parallel_periods:
+    - key_columns:
+      - prior_year_num
+      level: Year
+  - unique_name: Month
+    parallel_periods:
+    - key_columns:
+      - prior_year_num
+      level: Year
+    secondary_attributes:
+    - unique_name: Month Name
+      label: Month Name
+      dataset: dim_date
+      key_columns:
+      - month_name
+      name_column: month_name
+  - unique_name: Date
+    secondary_attributes:
+    - unique_name: Is Month End
+      label: Is Month End
+      dataset: dim_date
+      key_columns:
+      - is_month_end
+      name_column: is_month_end
+level_attributes:
+- unique_name: Year
+  label: Year
+  dataset: dim_date
+  key_columns:
+  - year_num
+- unique_name: Quarter
+  label: Quarter
+  dataset: dim_date
+  key_columns:
+  - quarter_name
+- unique_name: Month
+  label: Month
+  dataset: dim_date
+  key_columns:
+  - year_month
+- unique_name: Date
+  label: Date
+  dataset: dim_date
+  key_columns:
+  - date_id
+  is_unique_key: true

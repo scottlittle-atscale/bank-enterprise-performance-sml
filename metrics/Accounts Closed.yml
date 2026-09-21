@@ -1,0 +1,10 @@
+unique_name: Accounts Closed
+object_type: metric
+label: Accounts Closed
+dataset: fact_deposit_snapshot
+column: accounts_closed
+description: Deposit accounts closed during the period; the primary attrition signal. Additive period
+  flow.
+unrelated_dimensions_handling: repeat
+calculation_method: sum
+format: '#,##0'

@@ -1,0 +1,38 @@
+unique_name: Risk Rating Dimension
+object_type: dimension
+label: Risk Rating Dimension
+type: standard
+description: Regulatory credit risk-rating dimension. rating_grade rolls up to regulatory_class (Pass/Criticized/Classified);
+  is_nonperforming flags NPLs.
+hierarchies:
+- unique_name: Risk Rating Hierarchy
+  label: Risk Rating Hierarchy
+  filter_empty: 'yes'
+  levels:
+  - unique_name: Regulatory Class
+  - unique_name: Rating Grade
+    secondary_attributes:
+    - unique_name: Is Nonperforming
+      label: Is Nonperforming
+      dataset: dim_risk_rating
+      key_columns:
+      - is_nonperforming
+      name_column: is_nonperforming
+      description: Flag indicating a facility is non-performing (typically Substandard/Doubtful and/or
+        non-accrual).
+level_attributes:
+- unique_name: Regulatory Class
+  label: Regulatory Class
+  dataset: dim_risk_rating
+  key_columns:
+  - regulatory_class
+  name_column: regulatory_class
+  description: 'Supervisory credit classification: Pass, Criticized, or Classified. Classified plus non-accrual
+    drives non-performing analysis.'
+- unique_name: Rating Grade
+  label: Rating Grade
+  dataset: dim_risk_rating
+  key_columns:
+  - risk_rating_id
+  name_column: rating_grade
+  is_unique_key: true

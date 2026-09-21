@@ -1,0 +1,9 @@
+unique_name: Loan Count
+object_type: metric
+label: Loan Count
+dataset: fact_loan_origination
+column: loan_count
+description: Count of consumer loans booked.
+calculation_method: sum
+unrelated_dimensions_handling: repeat
+format: '#,##0'

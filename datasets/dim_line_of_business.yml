@@ -1,0 +1,13 @@
+unique_name: dim_line_of_business
+object_type: dataset
+label: dim_line_of_business
+connection_id: bank_enterprise_performance_bq
+table: dim_line_of_business
+columns:
+- name: lob_id
+  data_type: long
+- name: lob_name
+  data_type: string
+- name: segment
+  data_type: string
+description: Conformed line-of-business dimension. Rolls LOB up to Consumer Bank / Commercial Bank segment.

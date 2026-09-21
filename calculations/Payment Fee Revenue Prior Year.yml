@@ -1,0 +1,8 @@
+unique_name: Payment Fee Revenue Prior Year
+object_type: metric_calc
+label: Payment Fee Revenue Prior Year
+description: Commercial payments fee revenue for the same period one year prior.
+expression: CASE WHEN ISEMPTY([Measures].[Payment Fee Revenue]) THEN NULL ELSE (ParallelPeriod([Activity
+  Date Dimension].[Activity Date Hierarchy].[Activity Year], 1, [Activity Date Dimension].[Activity Date
+  Hierarchy].CurrentMember), [Measures].[Payment Fee Revenue]) END
+format: $#,##0

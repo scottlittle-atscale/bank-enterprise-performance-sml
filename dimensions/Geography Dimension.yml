@@ -1,0 +1,59 @@
+unique_name: Geography Dimension
+object_type: dimension
+label: Geography Dimension
+type: standard
+description: 'Conformed branch geography: region > state > market > branch.'
+hierarchies:
+- unique_name: Branch Geography
+  label: Branch Geography
+  filter_empty: 'yes'
+  levels:
+  - unique_name: Region
+  - unique_name: State
+  - unique_name: Market
+  - unique_name: Branch
+    secondary_attributes:
+    - unique_name: Branch Type
+      label: Branch Type
+      dataset: dim_branch
+      key_columns:
+      - branch_type
+      name_column: branch_type
+level_attributes:
+- unique_name: Region
+  label: Region
+  dataset: dim_market
+  key_columns:
+  - region
+  name_column: region
+  description: 'Bank geographic region conformed across all lines of business: Great Lakes, Northeast,
+    Pacific, Rocky Mountains.'
+- unique_name: State
+  label: State
+  dataset: dim_market
+  key_columns:
+  - state
+  name_column: state
+- unique_name: Market
+  label: Market
+  dataset: dim_market
+  key_columns:
+  - market_id
+  name_column: market_name
+  is_unique_key: true
+- unique_name: Branch
+  label: Branch
+  dataset: dim_branch
+  key_columns:
+  - branch_id
+  name_column: branch_name
+  is_unique_key: true
+relationships:
+- unique_name: branch_to_market
+  from:
+    dataset: dim_branch
+    join_columns:
+    - market_id
+  to:
+    level: Market
+  type: snowflake

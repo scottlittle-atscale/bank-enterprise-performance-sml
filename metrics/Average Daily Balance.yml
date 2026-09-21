@@ -1,0 +1,12 @@
+unique_name: Average Daily Balance
+object_type: metric
+label: Average Daily Balance
+dataset: fact_deposit_snapshot
+column: avg_daily_balance
+description: Mean daily ledger balance across the month for a deposit account group. Semi-additive; used
+  for interest and profitability analysis.
+unrelated_dimensions_handling: repeat
+calculation_method: sum
+semi_additive:
+  position: last
+format: $#,##0

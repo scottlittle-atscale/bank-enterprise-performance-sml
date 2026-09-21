@@ -1,0 +1,8 @@
+unique_name: Outstanding Balance Prior Year
+object_type: metric_calc
+label: Outstanding Balance Prior Year
+description: Facility outstanding balance for the same period one year prior.
+expression: CASE WHEN ISEMPTY([Measures].[Outstanding Balance]) THEN NULL ELSE (ParallelPeriod([Snapshot
+  Date Dimension].[Snapshot Date Hierarchy].[Snapshot Year], 1, [Snapshot Date Dimension].[Snapshot Date
+  Hierarchy].CurrentMember), [Measures].[Outstanding Balance]) END
+format: $#,##0

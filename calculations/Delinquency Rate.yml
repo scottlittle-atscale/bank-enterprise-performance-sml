@@ -1,0 +1,7 @@
+unique_name: Delinquency Rate
+object_type: metric_calc
+label: Delinquency Rate
+description: Share of consumer loans with any days past due.
+expression: CASE WHEN ISEMPTY([Measures].[Loan Count]) THEN NULL ELSE [Measures].[Delinquent Loan Count]
+  / [Measures].[Loan Count] END
+format: '#,##0.0%'

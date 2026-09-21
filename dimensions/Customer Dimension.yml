@@ -1,0 +1,61 @@
+unique_name: Customer Dimension
+object_type: dimension
+label: Customer Dimension
+type: standard
+description: Conformed customer dimension; 58,000 customers (50,000 consumer &#43; 8,000 commercial).
+  Consumer vs Commercial customer_type; segment, industry_vertical and revenue_band curated for commercial.
+hierarchies:
+- unique_name: Customer Hierarchy
+  label: Customer Hierarchy
+  filter_empty: 'yes'
+  levels:
+  - unique_name: Customer Type
+  - unique_name: Industry Vertical
+  - unique_name: Customer
+    secondary_attributes:
+    - unique_name: Customer Segment Attr
+      label: Customer Segment
+      dataset: dim_customer
+      key_columns:
+      - segment
+      name_column: segment
+      description: 'Relationship segmentation. Consumer: Mass Market, Mass Affluent, Private / HNW, Small
+        Business. Commercial: Middle Market, Corporate, Institutional.'
+    - unique_name: Revenue Band
+      label: Revenue Band
+      dataset: dim_customer
+      key_columns:
+      - revenue_band
+      name_column: revenue_band
+    - unique_name: Customer Region
+      label: Customer Region
+      dataset: dim_customer
+      key_columns:
+      - region
+      name_column: region
+    - unique_name: Customer State
+      label: Customer State
+      dataset: dim_customer
+      key_columns:
+      - state
+      name_column: state
+level_attributes:
+- unique_name: Customer Type
+  label: Customer Type
+  dataset: dim_customer
+  key_columns:
+  - customer_type
+  name_column: customer_type
+- unique_name: Industry Vertical
+  label: Industry Vertical
+  dataset: dim_customer
+  key_columns:
+  - industry_vertical
+  name_column: industry_vertical
+- unique_name: Customer
+  label: Customer
+  dataset: dim_customer
+  key_columns:
+  - customer_id
+  name_column: customer_name
+  is_unique_key: true

@@ -1,0 +1,18 @@
+unique_name: Delinquency Status Dimension
+object_type: dimension
+label: Delinquency Status Dimension
+is_degenerate: true
+description: 'As-of bucket for a consumer loan: Current, 30 DPD, 60 DPD, 90&#43; DPD.'
+hierarchies:
+- unique_name: Delinquency Status Hierarchy
+  label: Delinquency Status Hierarchy
+  filter_empty: 'yes'
+  levels:
+  - unique_name: Delinquency Status
+level_attributes:
+- unique_name: Delinquency Status
+  label: Delinquency Status
+  dataset: fact_loan_origination
+  key_columns:
+  - delinquency_status
+  name_column: delinquency_status

@@ -1,0 +1,11 @@
+unique_name: Outstanding Balance
+object_type: metric
+label: Outstanding Balance
+dataset: fact_loan_facility_snapshot
+column: outstanding_balance
+description: Drawn balance on a facility as of the snapshot. Semi-additive balance; read as-of snapshot.
+unrelated_dimensions_handling: repeat
+calculation_method: sum
+semi_additive:
+  position: last
+format: $#,##0

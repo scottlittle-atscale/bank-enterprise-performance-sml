@@ -1,0 +1,12 @@
+unique_name: Commitment Amount
+object_type: metric
+label: Commitment Amount
+dataset: fact_loan_facility_snapshot
+column: commitment_amount
+description: Total committed credit on a CRE/C&amp;I facility as of the snapshot. Semi-additive balance;
+  do not sum across snapshots.
+unrelated_dimensions_handling: repeat
+calculation_method: sum
+semi_additive:
+  position: last
+format: $#,##0

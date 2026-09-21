@@ -1,0 +1,8 @@
+unique_name: End-of-Month Balance Prior Year
+object_type: metric_calc
+label: End-of-Month Balance Prior Year
+description: Deposit end-of-month balance for the same period one year prior, on the Snapshot date role-play.
+expression: CASE WHEN ISEMPTY([Measures].[End-of-Month Balance]) THEN NULL ELSE (ParallelPeriod([Snapshot
+  Date Dimension].[Snapshot Date Hierarchy].[Snapshot Year], 1, [Snapshot Date Dimension].[Snapshot Date
+  Hierarchy].CurrentMember), [Measures].[End-of-Month Balance]) END
+format: $#,##0

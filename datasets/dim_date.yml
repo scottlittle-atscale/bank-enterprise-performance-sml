@@ -1,0 +1,35 @@
+unique_name: dim_date
+object_type: dataset
+label: dim_date
+connection_id: bank_enterprise_performance_bq
+table: dim_date
+columns:
+- name: date_id
+  data_type: date
+- name: day_of_week
+  data_type: long
+- name: day_name
+  data_type: string
+- name: day_of_month
+  data_type: long
+- name: month_num
+  data_type: long
+- name: month_name
+  data_type: string
+- name: year_month
+  data_type: string
+- name: quarter_num
+  data_type: long
+- name: quarter_name
+  data_type: string
+- name: year_num
+  data_type: long
+- name: is_weekend
+  data_type: boolean
+- name: is_month_end
+  data_type: boolean
+- name: prior_year_num
+  data_type: long
+  sql: year_num - 1
+description: Conformed calendar date dimension spanning 2023-07-01 to 2026-06-30. is_month_end flags the
+  snapshot dates used by the balance facts.

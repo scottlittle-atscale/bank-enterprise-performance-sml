@@ -1,0 +1,11 @@
+unique_name: Nonperforming Outstanding
+object_type: metric
+label: Nonperforming Outstanding
+dataset: fact_loan_facility_snapshot
+column: nonperforming_outstanding
+description: Outstanding balance on facilities flagged non-performing; semi-additive as-of snapshot.
+calculation_method: sum
+unrelated_dimensions_handling: repeat
+format: $#,##0
+semi_additive:
+  position: last

@@ -1,0 +1,188 @@
+unique_name: bank_enterprise_performance
+object_type: model
+label: Bank Enterprise Performance
+description: 'Unified enterprise-performance model for a US retail + commercial bank: four lines of business
+  over seven conformed dimensions.'
+relationships:
+- unique_name: deposit_to_snapshot_date
+  from:
+    dataset: fact_deposit_snapshot
+    join_columns:
+    - snapshot_date
+  to:
+    dimension: Date Dimension
+    level: Date
+  role_play: Snapshot {0}
+- unique_name: deposit_to_branch
+  from:
+    dataset: fact_deposit_snapshot
+    join_columns:
+    - branch_id
+  to:
+    dimension: Geography Dimension
+    level: Branch
+- unique_name: deposit_to_product
+  from:
+    dataset: fact_deposit_snapshot
+    join_columns:
+    - product_id
+  to:
+    dimension: Product Dimension
+    level: Product
+- unique_name: origination_to_origination_date
+  from:
+    dataset: fact_loan_origination
+    join_columns:
+    - origination_date
+  to:
+    dimension: Date Dimension
+    level: Date
+  role_play: Origination {0}
+- unique_name: origination_to_branch
+  from:
+    dataset: fact_loan_origination
+    join_columns:
+    - branch_id
+  to:
+    dimension: Geography Dimension
+    level: Branch
+- unique_name: origination_to_product
+  from:
+    dataset: fact_loan_origination
+    join_columns:
+    - product_id
+  to:
+    dimension: Product Dimension
+    level: Product
+- unique_name: origination_to_customer
+  from:
+    dataset: fact_loan_origination
+    join_columns:
+    - customer_id
+  to:
+    dimension: Customer Dimension
+    level: Customer
+- unique_name: payment_to_activity_date
+  from:
+    dataset: fact_payment_transaction
+    join_columns:
+    - activity_month
+  to:
+    dimension: Date Dimension
+    level: Date
+  role_play: Activity {0}
+- unique_name: payment_to_product
+  from:
+    dataset: fact_payment_transaction
+    join_columns:
+    - product_id
+  to:
+    dimension: Product Dimension
+    level: Product
+- unique_name: payment_to_customer
+  from:
+    dataset: fact_payment_transaction
+    join_columns:
+    - customer_id
+  to:
+    dimension: Customer Dimension
+    level: Customer
+- unique_name: facility_to_snapshot_date
+  from:
+    dataset: fact_loan_facility_snapshot
+    join_columns:
+    - snapshot_date
+  to:
+    dimension: Date Dimension
+    level: Date
+  role_play: Snapshot {0}
+- unique_name: facility_to_product
+  from:
+    dataset: fact_loan_facility_snapshot
+    join_columns:
+    - product_id
+  to:
+    dimension: Product Dimension
+    level: Product
+- unique_name: facility_to_customer
+  from:
+    dataset: fact_loan_facility_snapshot
+    join_columns:
+    - customer_id
+  to:
+    dimension: Customer Dimension
+    level: Customer
+- unique_name: facility_to_risk_rating
+  from:
+    dataset: fact_loan_facility_snapshot
+    join_columns:
+    - risk_rating_id
+  to:
+    dimension: Risk Rating Dimension
+    level: Rating Grade
+dimensions:
+- Customer Segment Dimension
+- Loan Vintage Dimension
+- Delinquency Status Dimension
+- FICO Band Dimension
+metrics:
+- unique_name: End-of-Month Balance
+  folder: Deposit Metrics
+- unique_name: Average Daily Balance
+  folder: Deposit Metrics
+- unique_name: Account Count
+  folder: Deposit Metrics
+- unique_name: Accounts Opened
+  folder: Deposit Metrics
+- unique_name: Accounts Closed
+  folder: Deposit Metrics
+- unique_name: Interest Expense
+  folder: Deposit Metrics
+- unique_name: Commitment Amount
+  folder: CRE & Middle Market Metrics
+- unique_name: Outstanding Balance
+  folder: CRE & Middle Market Metrics
+- unique_name: Undrawn Amount
+  folder: CRE & Middle Market Metrics
+- unique_name: Interest Income
+  folder: CRE & Middle Market Metrics
+- unique_name: Net Interest Margin bps
+  folder: CRE & Middle Market Metrics
+- unique_name: Loan Amount Originated
+  folder: Consumer Lending Metrics
+- unique_name: Current Loan Balance
+  folder: Consumer Lending Metrics
+- unique_name: Interest Rate
+  folder: Consumer Lending Metrics
+- unique_name: Loan-to-Value
+  folder: Consumer Lending Metrics
+- unique_name: Transaction Count
+  folder: Commercial Payments Metrics
+- unique_name: Payment Volume
+  folder: Commercial Payments Metrics
+- unique_name: Payment Fee Revenue
+  folder: Commercial Payments Metrics
+- unique_name: Loan Count
+  folder: Consumer Lending Metrics
+- unique_name: Delinquent Loan Count
+  folder: Consumer Lending Metrics
+- unique_name: Nonperforming Outstanding
+  folder: CRE & Middle Market Metrics
+- unique_name: End-of-Month Balance Prior Year
+  folder: Deposit Metrics
+- unique_name: End-of-Month Balance YoY Growth Percent
+  folder: Deposit Metrics
+- unique_name: Payment Fee Revenue Year to Date
+  folder: Commercial Payments Metrics
+- unique_name: Payment Fee Revenue Prior Year
+  folder: Commercial Payments Metrics
+- unique_name: Payment Fee Revenue YoY Growth Percent
+  folder: Commercial Payments Metrics
+- unique_name: Outstanding Balance Prior Year
+  folder: CRE & Middle Market Metrics
+- unique_name: Delinquency Rate
+  folder: Consumer Lending Metrics
+- unique_name: Nonperforming Ratio
+  folder: CRE & Middle Market Metrics
+- unique_name: Facility Utilization Rate
+  folder: CRE & Middle Market Metrics

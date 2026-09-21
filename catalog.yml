@@ -1,0 +1,5 @@
+unique_name: bank_enterprise_performance_catalog
+object_type: catalog
+label: Bank Enterprise Performance
+version: 1.7
+description: Unified enterprise-performance catalog for a US retail + commercial bank.

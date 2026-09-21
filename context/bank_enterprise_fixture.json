@@ -1,0 +1,1009 @@
+{
+  "model_name": "Bank Enterprise Performance",
+  "database": "atscale-sales-demo",
+  "schema": "BANK_ENTERPRISE_PERFORMANCE",
+  "engine": "BigQuery",
+  "_comment": "Curated enterprise-catalog metadata for the Bank unified performance model (galaxy schema: 7 conformed dimensions x 4 fact tables). This fixture represents metadata that ALREADY EXISTS in the enterprise data catalog -- descriptions, business glossary, governance classifications, and (critically) aggregation-semantics tags (semi-additive / ratio / additive-flow). The demo assumes this curation is done; AtScale consumes it to generate a governed SML model. Additivity tags come from data_profile.yaml + DDL comments in the use-case bundle. FKs come from erd.mmd (BigQuery keeps them as comments only, so the catalog is the source of join truth).",
+  "glossary": [
+    {
+      "name": "End-of-Month Balance",
+      "definition": "Deposit ledger balance as of the month-end snapshot date. Semi-additive: valid to sum across branches, products, and segments within a snapshot, but never across snapshot dates. Read as-of the latest snapshot."
+    },
+    {
+      "name": "Average Daily Balance",
+      "definition": "Mean daily ledger balance across the month for a deposit account group. Semi-additive; used for interest and profitability analysis."
+    },
+    {
+      "name": "Account Count",
+      "definition": "Number of open deposit accounts as of the snapshot. Semi-additive point-in-time count; do not sum across months."
+    },
+    {
+      "name": "Accounts Opened",
+      "definition": "New deposit accounts opened during the period. Additive period flow."
+    },
+    {
+      "name": "Accounts Closed",
+      "definition": "Deposit accounts closed during the period; the primary attrition signal. Additive period flow."
+    },
+    {
+      "name": "Interest Expense",
+      "definition": "Interest paid on deposits during the month. Additive period flow."
+    },
+    {
+      "name": "Loan Amount Originated",
+      "definition": "Principal booked at loan origination. Additive; recognized in the origination month."
+    },
+    {
+      "name": "Current Loan Balance",
+      "definition": "Outstanding principal on a consumer loan as of the current month. As-of state per loan, not a monthly roll-forward."
+    },
+    {
+      "name": "Interest Rate",
+      "definition": "Note rate on a consumer loan, in percent. Ratio; average across loans, never sum."
+    },
+    {
+      "name": "Loan-to-Value",
+      "definition": "Loan principal divided by collateral value at origination, as a ratio. Average, never sum."
+    },
+    {
+      "name": "Delinquency Status",
+      "definition": "As-of bucket for a consumer loan: Current, 30 DPD, 60 DPD, 90+ DPD."
+    },
+    {
+      "name": "Loan Vintage",
+      "definition": "Origination year-month (YYYY-MM) cohort of a loan; used for vintage delinquency curves."
+    },
+    {
+      "name": "Payment Fee Revenue",
+      "definition": "Treasury-management and payments fee revenue earned in the activity month. Additive period flow."
+    },
+    {
+      "name": "Payment Volume",
+      "definition": "Dollar value of payments processed in the activity month. Additive period flow."
+    },
+    {
+      "name": "Transaction Count",
+      "definition": "Number of payment transactions in the activity month. Additive period flow."
+    },
+    {
+      "name": "Commitment Amount",
+      "definition": "Total committed credit on a CRE/C&I facility as of the snapshot. Semi-additive balance; do not sum across snapshots."
+    },
+    {
+      "name": "Outstanding Balance",
+      "definition": "Drawn balance on a facility as of the snapshot. Semi-additive balance; read as-of snapshot."
+    },
+    {
+      "name": "Undrawn Amount",
+      "definition": "Committed but undrawn credit as of the snapshot (commitment minus outstanding). Semi-additive."
+    },
+    {
+      "name": "Interest Income",
+      "definition": "Interest income accrued on a facility during the month. Additive period flow."
+    },
+    {
+      "name": "Net Interest Margin (bps)",
+      "definition": "Net interest margin in basis points for a facility. Ratio; aggregate with average, never sum."
+    },
+    {
+      "name": "Regulatory Classification",
+      "definition": "Supervisory credit classification: Pass, Criticized, or Classified. Classified plus non-accrual drives non-performing analysis."
+    },
+    {
+      "name": "Non-Performing",
+      "definition": "Flag indicating a facility is non-performing (typically Substandard/Doubtful and/or non-accrual)."
+    },
+    {
+      "name": "Line of Business",
+      "definition": "Bank reporting line of business: Retail Deposits, Consumer Lending, Commercial Payments, Commercial Real Estate, Middle Market Lending. Rolls up to segment (Consumer Bank / Commercial Bank)."
+    },
+    {
+      "name": "Region",
+      "definition": "Bank geographic region conformed across all lines of business: Great Lakes, Northeast, Pacific, Rocky Mountains."
+    },
+    {
+      "name": "Customer Segment",
+      "definition": "Relationship segmentation. Consumer: Mass Market, Mass Affluent, Private / HNW, Small Business. Commercial: Middle Market, Corporate, Institutional."
+    }
+  ],
+  "tables": [
+    {
+      "name": "dim_date",
+      "description": "Conformed calendar date dimension spanning 2023-07-01 to 2026-06-30. is_month_end flags the snapshot dates used by the balance facts.",
+      "owner": "enterprise-cdo",
+      "tags": [
+        "Dimension",
+        "Conformed"
+      ],
+      "primary_key": "date_id",
+      "columns": [
+        {
+          "name": "date_id",
+          "type": "DATE",
+          "description": "Calendar date (primary key).",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "day_of_week",
+          "type": "INT64",
+          "description": "Day of week (1-7)."
+        },
+        {
+          "name": "day_name",
+          "type": "STRING",
+          "description": "Day name."
+        },
+        {
+          "name": "day_of_month",
+          "type": "INT64",
+          "description": "Day of month."
+        },
+        {
+          "name": "month_num",
+          "type": "INT64",
+          "description": "Month number (1-12)."
+        },
+        {
+          "name": "month_name",
+          "type": "STRING",
+          "description": "Month name."
+        },
+        {
+          "name": "year_month",
+          "type": "STRING",
+          "description": "Year-month label (YYYY-MM)."
+        },
+        {
+          "name": "quarter_num",
+          "type": "INT64",
+          "description": "Calendar quarter number."
+        },
+        {
+          "name": "quarter_name",
+          "type": "STRING",
+          "description": "Quarter label, e.g. 'Q1 2024'."
+        },
+        {
+          "name": "year_num",
+          "type": "INT64",
+          "description": "Calendar year."
+        },
+        {
+          "name": "is_weekend",
+          "type": "BOOL",
+          "description": "True on Saturday/Sunday."
+        },
+        {
+          "name": "is_month_end",
+          "type": "BOOL",
+          "description": "True on month-end snapshot dates."
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "name": "dim_line_of_business",
+      "description": "Conformed line-of-business dimension. Rolls LOB up to Consumer Bank / Commercial Bank segment.",
+      "owner": "enterprise-cdo",
+      "tags": [
+        "Dimension",
+        "Conformed"
+      ],
+      "primary_key": "lob_id",
+      "columns": [
+        {
+          "name": "lob_id",
+          "type": "INT64",
+          "description": "Line-of-business key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "lob_name",
+          "type": "STRING",
+          "description": "",
+          "glossary_term": "Line of Business"
+        },
+        {
+          "name": "segment",
+          "type": "STRING",
+          "description": "Consumer Bank or Commercial Bank."
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "name": "dim_market",
+      "description": "Conformed geographic market dimension. region -> state -> market across the bank's 15-state footprint.",
+      "owner": "enterprise-cdo",
+      "tags": [
+        "Dimension",
+        "Conformed"
+      ],
+      "primary_key": "market_id",
+      "columns": [
+        {
+          "name": "market_id",
+          "type": "INT64",
+          "description": "Market key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "market_name",
+          "type": "STRING",
+          "description": "Metro market name."
+        },
+        {
+          "name": "state",
+          "type": "STRING",
+          "description": "US state (15-state footprint)."
+        },
+        {
+          "name": "region",
+          "type": "STRING",
+          "description": "",
+          "glossary_term": "Region"
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "name": "dim_branch",
+      "description": "Branch dimension; ~1,000 branches, each belonging to a market. Snowflakes to dim_market via market_id.",
+      "owner": "consumer-bank-data",
+      "tags": [
+        "Dimension",
+        "Conformed"
+      ],
+      "primary_key": "branch_id",
+      "columns": [
+        {
+          "name": "branch_id",
+          "type": "INT64",
+          "description": "Branch key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "branch_name",
+          "type": "STRING",
+          "description": "Branch name."
+        },
+        {
+          "name": "branch_type",
+          "type": "STRING",
+          "description": "Financial Center, In-Store, or Private Bank Office."
+        },
+        {
+          "name": "market_id",
+          "type": "INT64",
+          "description": "Market this branch belongs to.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "state",
+          "type": "STRING",
+          "description": "Branch state."
+        },
+        {
+          "name": "region",
+          "type": "STRING",
+          "description": "Branch region."
+        }
+      ],
+      "foreign_keys": [
+        {
+          "column": "market_id",
+          "references_table": "dim_market",
+          "references_column": "market_id"
+        }
+      ]
+    },
+    {
+      "name": "dim_product",
+      "description": "Conformed product dimension across all four lines of business. product_category groups products; snowflakes to dim_line_of_business via lob_id.",
+      "owner": "product-data",
+      "tags": [
+        "Dimension",
+        "Conformed"
+      ],
+      "primary_key": "product_id",
+      "columns": [
+        {
+          "name": "product_id",
+          "type": "INT64",
+          "description": "Product key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "product_name",
+          "type": "STRING",
+          "description": "Product display name."
+        },
+        {
+          "name": "product_category",
+          "type": "STRING",
+          "description": "Product category, e.g. Checking, Mortgage, Home Equity, Card, CRE, C&I."
+        },
+        {
+          "name": "line_of_business",
+          "type": "STRING",
+          "description": "Line of business name."
+        },
+        {
+          "name": "lob_id",
+          "type": "INT64",
+          "description": "Line-of-business key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        }
+      ],
+      "foreign_keys": [
+        {
+          "column": "lob_id",
+          "references_table": "dim_line_of_business",
+          "references_column": "lob_id"
+        }
+      ]
+    },
+    {
+      "name": "dim_risk_rating",
+      "description": "Regulatory credit risk-rating dimension. rating_grade rolls up to regulatory_class (Pass/Criticized/Classified); is_nonperforming flags NPLs.",
+      "owner": "credit-risk-data",
+      "tags": [
+        "Dimension",
+        "Conformed"
+      ],
+      "primary_key": "risk_rating_id",
+      "columns": [
+        {
+          "name": "risk_rating_id",
+          "type": "INT64",
+          "description": "Risk-rating key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "rating_grade",
+          "type": "STRING",
+          "description": "Rating grade, 1-3 Strong through 9 Doubtful."
+        },
+        {
+          "name": "regulatory_class",
+          "type": "STRING",
+          "description": "",
+          "glossary_term": "Regulatory Classification"
+        },
+        {
+          "name": "is_nonperforming",
+          "type": "BOOL",
+          "description": "",
+          "glossary_term": "Non-Performing"
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "name": "dim_customer",
+      "description": "Conformed customer dimension; 58,000 customers (50,000 consumer + 8,000 commercial). Consumer vs Commercial customer_type; segment, industry_vertical and revenue_band curated for commercial.",
+      "owner": "enterprise-cdo",
+      "tags": [
+        "Dimension",
+        "Conformed",
+        "PII"
+      ],
+      "primary_key": "customer_id",
+      "columns": [
+        {
+          "name": "customer_id",
+          "type": "INT64",
+          "description": "Customer key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "customer_key",
+          "type": "STRING",
+          "description": "Business customer key.",
+          "tags": [
+            "PII"
+          ]
+        },
+        {
+          "name": "customer_name",
+          "type": "STRING",
+          "description": "Customer name.",
+          "tags": [
+            "PII"
+          ]
+        },
+        {
+          "name": "customer_type",
+          "type": "STRING",
+          "description": "Consumer or Commercial."
+        },
+        {
+          "name": "segment",
+          "type": "STRING",
+          "description": "",
+          "glossary_term": "Customer Segment"
+        },
+        {
+          "name": "industry_vertical",
+          "type": "STRING",
+          "description": "Commercial industry vertical; 'N/A' for consumer."
+        },
+        {
+          "name": "revenue_band",
+          "type": "STRING",
+          "description": "Commercial annual-revenue band; 'N/A' for consumer."
+        },
+        {
+          "name": "region",
+          "type": "STRING",
+          "description": "Customer region."
+        },
+        {
+          "name": "state",
+          "type": "STRING",
+          "description": "Customer state."
+        },
+        {
+          "name": "acquisition_date",
+          "type": "DATE",
+          "description": "Date the customer relationship began."
+        }
+      ],
+      "foreign_keys": []
+    },
+    {
+      "name": "fact_deposit_snapshot",
+      "description": "Retail Deposits (Consumer Bank). Monthly snapshot at branch x deposit-product x customer-segment. Balances are semi-additive; opened/closed/interest are additive period flows.",
+      "owner": "consumer-deposits-data",
+      "tags": [
+        "Fact",
+        "Snapshot",
+        "Confidential"
+      ],
+      "primary_key": "deposit_snapshot_id",
+      "columns": [
+        {
+          "name": "deposit_snapshot_id",
+          "type": "INT64",
+          "description": "Snapshot row key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "snapshot_date",
+          "type": "DATE",
+          "description": "Month-end snapshot date.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "branch_id",
+          "type": "INT64",
+          "description": "Branch key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "market_id",
+          "type": "INT64",
+          "description": "Market key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "product_id",
+          "type": "INT64",
+          "description": "Deposit product key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "customer_segment",
+          "type": "STRING",
+          "description": "Degenerate segment: Mass Market, Mass Affluent, Private / HNW, Small Business."
+        },
+        {
+          "name": "eom_balance",
+          "type": "NUMERIC",
+          "description": "",
+          "glossary_term": "End-of-Month Balance",
+          "tags": [
+            "Measure",
+            "semi-additive"
+          ]
+        },
+        {
+          "name": "avg_daily_balance",
+          "type": "NUMERIC",
+          "description": "",
+          "glossary_term": "Average Daily Balance",
+          "tags": [
+            "Measure",
+            "semi-additive"
+          ]
+        },
+        {
+          "name": "account_count",
+          "type": "INT64",
+          "description": "",
+          "glossary_term": "Account Count",
+          "tags": [
+            "Measure",
+            "semi-additive"
+          ]
+        },
+        {
+          "name": "accounts_opened",
+          "type": "INT64",
+          "description": "",
+          "glossary_term": "Accounts Opened",
+          "tags": [
+            "Measure",
+            "additive-flow"
+          ]
+        },
+        {
+          "name": "accounts_closed",
+          "type": "INT64",
+          "description": "",
+          "glossary_term": "Accounts Closed",
+          "tags": [
+            "Measure",
+            "additive-flow"
+          ]
+        },
+        {
+          "name": "interest_expense_mtd",
+          "type": "NUMERIC",
+          "description": "",
+          "glossary_term": "Interest Expense",
+          "tags": [
+            "Measure",
+            "additive-flow"
+          ]
+        }
+      ],
+      "foreign_keys": [
+        {
+          "column": "snapshot_date",
+          "references_table": "dim_date",
+          "references_column": "date_id"
+        },
+        {
+          "column": "branch_id",
+          "references_table": "dim_branch",
+          "references_column": "branch_id"
+        },
+        {
+          "column": "market_id",
+          "references_table": "dim_market",
+          "references_column": "market_id"
+        },
+        {
+          "column": "product_id",
+          "references_table": "dim_product",
+          "references_column": "product_id"
+        }
+      ]
+    },
+    {
+      "name": "fact_loan_origination",
+      "description": "Consumer Lending (Consumer Bank). One row per loan booked (mortgage, HELOC, home-equity, indirect auto/marine). delinquency_status and current_balance are as-of the current month.",
+      "owner": "consumer-lending-data",
+      "tags": [
+        "Fact",
+        "Transaction",
+        "Confidential"
+      ],
+      "primary_key": "loan_id",
+      "columns": [
+        {
+          "name": "loan_id",
+          "type": "INT64",
+          "description": "Loan key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "origination_date",
+          "type": "DATE",
+          "description": "Loan origination date.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "customer_id",
+          "type": "INT64",
+          "description": "Borrower key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "branch_id",
+          "type": "INT64",
+          "description": "Originating branch key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "market_id",
+          "type": "INT64",
+          "description": "Market key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "product_id",
+          "type": "INT64",
+          "description": "Loan product key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "loan_amount",
+          "type": "NUMERIC",
+          "description": "",
+          "glossary_term": "Loan Amount Originated",
+          "tags": [
+            "Measure",
+            "additive"
+          ]
+        },
+        {
+          "name": "current_balance",
+          "type": "NUMERIC",
+          "description": "",
+          "glossary_term": "Current Loan Balance",
+          "tags": [
+            "Measure",
+            "semi-additive"
+          ]
+        },
+        {
+          "name": "interest_rate_pct",
+          "type": "FLOAT64",
+          "description": "",
+          "glossary_term": "Interest Rate",
+          "tags": [
+            "Measure",
+            "ratio"
+          ]
+        },
+        {
+          "name": "term_months",
+          "type": "INT64",
+          "description": "Loan term in months."
+        },
+        {
+          "name": "fico_band",
+          "type": "STRING",
+          "description": "FICO band at origination."
+        },
+        {
+          "name": "ltv",
+          "type": "FLOAT64",
+          "description": "",
+          "glossary_term": "Loan-to-Value",
+          "tags": [
+            "Measure",
+            "ratio"
+          ]
+        },
+        {
+          "name": "vintage",
+          "type": "STRING",
+          "description": "",
+          "glossary_term": "Loan Vintage"
+        },
+        {
+          "name": "delinquency_status",
+          "type": "STRING",
+          "description": "",
+          "glossary_term": "Delinquency Status"
+        },
+        {
+          "name": "days_past_due",
+          "type": "INT64",
+          "description": "Days past due as-of current month."
+        }
+      ],
+      "foreign_keys": [
+        {
+          "column": "origination_date",
+          "references_table": "dim_date",
+          "references_column": "date_id"
+        },
+        {
+          "column": "customer_id",
+          "references_table": "dim_customer",
+          "references_column": "customer_id"
+        },
+        {
+          "column": "branch_id",
+          "references_table": "dim_branch",
+          "references_column": "branch_id"
+        },
+        {
+          "column": "market_id",
+          "references_table": "dim_market",
+          "references_column": "market_id"
+        },
+        {
+          "column": "product_id",
+          "references_table": "dim_product",
+          "references_column": "product_id"
+        }
+      ]
+    },
+    {
+      "name": "fact_payment_transaction",
+      "description": "Commercial Payments (Commercial Bank). Monthly aggregate at commercial-client x payments-product. All measures are additive period flows.",
+      "owner": "commercial-payments-data",
+      "tags": [
+        "Fact",
+        "Monthly",
+        "Confidential"
+      ],
+      "primary_key": "payment_id",
+      "columns": [
+        {
+          "name": "payment_id",
+          "type": "INT64",
+          "description": "Payment activity row key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "activity_month",
+          "type": "DATE",
+          "description": "First day of the activity month.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "customer_id",
+          "type": "INT64",
+          "description": "Commercial client key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "product_id",
+          "type": "INT64",
+          "description": "Payments product key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "transaction_count",
+          "type": "INT64",
+          "description": "",
+          "glossary_term": "Transaction Count",
+          "tags": [
+            "Measure",
+            "additive"
+          ]
+        },
+        {
+          "name": "payment_volume_usd",
+          "type": "NUMERIC",
+          "description": "",
+          "glossary_term": "Payment Volume",
+          "tags": [
+            "Measure",
+            "additive"
+          ]
+        },
+        {
+          "name": "fee_revenue_usd",
+          "type": "NUMERIC",
+          "description": "",
+          "glossary_term": "Payment Fee Revenue",
+          "tags": [
+            "Measure",
+            "additive"
+          ]
+        }
+      ],
+      "foreign_keys": [
+        {
+          "column": "activity_month",
+          "references_table": "dim_date",
+          "references_column": "date_id"
+        },
+        {
+          "column": "customer_id",
+          "references_table": "dim_customer",
+          "references_column": "customer_id"
+        },
+        {
+          "column": "product_id",
+          "references_table": "dim_product",
+          "references_column": "product_id"
+        }
+      ]
+    },
+    {
+      "name": "fact_loan_facility_snapshot",
+      "description": "CRE + Middle Market Lending (Commercial Bank). Monthly snapshot per facility. commitment/outstanding/undrawn are semi-additive; interest_income_mtd is an additive flow; nim_bps is a ratio.",
+      "owner": "commercial-lending-data",
+      "tags": [
+        "Fact",
+        "Snapshot",
+        "Confidential"
+      ],
+      "primary_key": "facility_snapshot_id",
+      "columns": [
+        {
+          "name": "facility_snapshot_id",
+          "type": "INT64",
+          "description": "Facility snapshot row key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "snapshot_date",
+          "type": "DATE",
+          "description": "Month-end snapshot date.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "facility_id",
+          "type": "INT64",
+          "description": "Degenerate facility key."
+        },
+        {
+          "name": "customer_id",
+          "type": "INT64",
+          "description": "Commercial borrower key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "product_id",
+          "type": "INT64",
+          "description": "Facility product key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "lob_id",
+          "type": "INT64",
+          "description": "Line-of-business key (CRE vs Middle Market).",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "risk_rating_id",
+          "type": "INT64",
+          "description": "Risk-rating key.",
+          "tags": [
+            "Dimension-Key"
+          ]
+        },
+        {
+          "name": "commitment_amount",
+          "type": "NUMERIC",
+          "description": "",
+          "glossary_term": "Commitment Amount",
+          "tags": [
+            "Measure",
+            "semi-additive"
+          ]
+        },
+        {
+          "name": "outstanding_balance",
+          "type": "NUMERIC",
+          "description": "",
+          "glossary_term": "Outstanding Balance",
+          "tags": [
+            "Measure",
+            "semi-additive"
+          ]
+        },
+        {
+          "name": "undrawn_amount",
+          "type": "NUMERIC",
+          "description": "",
+          "glossary_term": "Undrawn Amount",
+          "tags": [
+            "Measure",
+            "semi-additive"
+          ]
+        },
+        {
+          "name": "interest_income_mtd",
+          "type": "NUMERIC",
+          "description": "",
+          "glossary_term": "Interest Income",
+          "tags": [
+            "Measure",
+            "additive-flow"
+          ]
+        },
+        {
+          "name": "nim_bps",
+          "type": "FLOAT64",
+          "description": "",
+          "glossary_term": "Net Interest Margin (bps)",
+          "tags": [
+            "Measure",
+            "ratio"
+          ]
+        },
+        {
+          "name": "is_nonperforming",
+          "type": "BOOL",
+          "description": "",
+          "glossary_term": "Non-Performing"
+        }
+      ],
+      "foreign_keys": [
+        {
+          "column": "snapshot_date",
+          "references_table": "dim_date",
+          "references_column": "date_id"
+        },
+        {
+          "column": "customer_id",
+          "references_table": "dim_customer",
+          "references_column": "customer_id"
+        },
+        {
+          "column": "product_id",
+          "references_table": "dim_product",
+          "references_column": "product_id"
+        },
+        {
+          "column": "lob_id",
+          "references_table": "dim_line_of_business",
+          "references_column": "lob_id"
+        },
+        {
+          "column": "risk_rating_id",
+          "references_table": "dim_risk_rating",
+          "references_column": "risk_rating_id"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+# data_profile.yaml — bank_enterprise_performance
+# Auto-profiled from generated CSVs (seed 42). Types are the BigQuery target types.
+# Snapshot balances are SEMI-ADDITIVE (read as-of a snapshot_date, never summed across
+# snapshots); period flows and transaction measures are additive.
+generated_at: "2026-07-14"
+currency: USD
+warehouse: bigquery
+tables:
+  - name: dim_date
+    role: dimension
+    rows: 1096
+    columns:
+      - { name: date_id, type: DATE, nulls: 0, distinct: 1096 }
+      - { name: day_of_week, type: INT64, nulls: 0, distinct: 7 }
+      - { name: day_name, type: STRING, nulls: 0, distinct: 7, values: ["Friday", "Monday", "Saturday", "Sunday", "Thursday", "Tuesday", "Wednesday"] }
+      - { name: day_of_month, type: INT64, nulls: 0, distinct: 31 }
+      - { name: month_num, type: INT64, nulls: 0, distinct: 12 }
+      - { name: month_name, type: STRING, nulls: 0, distinct: 12, values: ["April", "August", "December", "February", "January", "July", "June", "March", "May", "November", "October", "September"] }
+      - { name: year_month, type: STRING, nulls: 0, distinct: 36 }
+      - { name: quarter_num, type: INT64, nulls: 0, distinct: 4 }
+      - { name: quarter_name, type: STRING, nulls: 0, distinct: 12, values: ["Q1 2024", "Q1 2025", "Q1 2026", "Q2 2024", "Q2 2025", "Q2 2026", "Q3 2023", "Q3 2024", "Q3 2025", "Q4 2023", "Q4 2024", "Q4 2025"] }
+      - { name: year_num, type: INT64, nulls: 0, distinct: 4 }
+      - { name: is_weekend, type: BOOL, nulls: 0, distinct: 2, values: ["False", "True"] }
+      - { name: is_month_end, type: BOOL, nulls: 0, distinct: 2, values: ["False", "True"] }
+  - name: dim_line_of_business
+    role: dimension
+    rows: 5
+    columns:
+      - { name: lob_id, type: INT64, nulls: 0, distinct: 5 }
+      - { name: lob_name, type: STRING, nulls: 0, distinct: 5, values: ["Commercial Payments", "Commercial Real Estate", "Consumer Lending", "Middle Market Lending", "Retail Deposits"] }
+      - { name: segment, type: STRING, nulls: 0, distinct: 2, values: ["Commercial Bank", "Consumer Bank"] }
+  - name: dim_market
+    role: dimension
+    rows: 30
+    columns:
+      - { name: market_id, type: INT64, nulls: 0, distinct: 30 }
+      - { name: market_name, type: STRING, nulls: 0, distinct: 30 }
+      - { name: state, type: STRING, nulls: 0, distinct: 15 }
+      - { name: region, type: STRING, nulls: 0, distinct: 4, values: ["Great Lakes", "Northeast", "Pacific", "Rocky Mountains"] }
+  - name: dim_branch
+    role: dimension
+    rows: 1000
+    columns:
+      - { name: branch_id, type: INT64, nulls: 0, distinct: 1000 }
+      - { name: branch_name, type: STRING, nulls: 0, distinct: 1000 }
+      - { name: branch_type, type: STRING, nulls: 0, distinct: 3, values: ["Financial Center", "In-Store", "Private Bank Office"] }
+      - { name: market_id, type: INT64, nulls: 0, distinct: 30 }
+      - { name: state, type: STRING, nulls: 0, distinct: 15 }
+      - { name: region, type: STRING, nulls: 0, distinct: 4, values: ["Great Lakes", "Northeast", "Pacific", "Rocky Mountains"] }
+  - name: dim_product
+    role: dimension
+    rows: 24
+    columns:
+      - { name: product_id, type: INT64, nulls: 0, distinct: 24 }
+      - { name: product_name, type: STRING, nulls: 0, distinct: 24 }
+      - { name: product_category, type: STRING, nulls: 0, distinct: 18 }
+      - { name: line_of_business, type: STRING, nulls: 0, distinct: 5, values: ["Commercial Payments", "Commercial Real Estate", "Consumer Lending", "Middle Market Lending", "Retail Deposits"] }
+      - { name: lob_id, type: INT64, nulls: 0, distinct: 5 }
+  - name: dim_risk_rating
+    role: dimension
+    rows: 5
+    columns:
+      - { name: risk_rating_id, type: INT64, nulls: 0, distinct: 5 }
+      - { name: rating_grade, type: STRING, nulls: 0, distinct: 5, values: ["1-3 Strong", "4-6 Acceptable", "7 Special Mention", "8 Substandard", "9 Doubtful"] }
+      - { name: regulatory_class, type: STRING, nulls: 0, distinct: 3, values: ["Classified", "Criticized", "Pass"] }
+      - { name: is_nonperforming, type: BOOL, nulls: 0, distinct: 2, values: ["False", "True"] }
+  - name: dim_customer
+    role: dimension
+    rows: 58000
+    columns:
+      - { name: customer_id, type: INT64, nulls: 0, distinct: 58000 }
+      - { name: customer_key, type: STRING, nulls: 0, distinct: 58000 }
+      - { name: customer_name, type: STRING, nulls: 0, distinct: 58000 }
+      - { name: customer_type, type: STRING, nulls: 0, distinct: 2, values: ["Commercial", "Consumer"] }
+      - { name: segment, type: STRING, nulls: 0, distinct: 7, values: ["Corporate", "Institutional", "Mass Affluent", "Mass Market", "Middle Market", "Private / HNW", "Small Business"] }
+      - { name: industry_vertical, type: STRING, nulls: 0, distinct: 8, values: ["Consumer", "Energy", "Healthcare", "Industrial", "N/A", "Public Sector", "Real Estate", "Technology"] }
+      - { name: revenue_band, type: STRING, nulls: 0, distinct: 5, values: ["$10M–$50M", "$250M–$1B", "$50M–$250M", ">$1B", "N/A"] }
+      - { name: region, type: STRING, nulls: 0, distinct: 4, values: ["Great Lakes", "Northeast", "Pacific", "Rocky Mountains"] }
+      - { name: state, type: STRING, nulls: 0, distinct: 15 }
+      - { name: acquisition_date, type: DATE, nulls: 0, distinct: 5030 }
+  - name: fact_deposit_snapshot
+    role: fact
+    rows: 409788
+    columns:
+      - { name: deposit_snapshot_id, type: INT64, nulls: 0, distinct: 409788 }
+      - { name: snapshot_date, type: DATE, nulls: 0, distinct: 36 }
+      - { name: branch_id, type: INT64, nulls: 0, distinct: 1000 }
+      - { name: market_id, type: INT64, nulls: 0, distinct: 30 }
+      - { name: product_id, type: INT64, nulls: 0, distinct: 4 }
+      - { name: customer_segment, type: STRING, nulls: 0, distinct: 4, values: ["Mass Affluent", "Mass Market", "Private / HNW", "Small Business"] }
+      - { name: eom_balance, type: NUMERIC, nulls: 0, distinct: 409754 }
+      - { name: avg_daily_balance, type: NUMERIC, nulls: 0, distinct: 409733 }
+      - { name: account_count, type: INT64, nulls: 0, distinct: 11977 }
+      - { name: accounts_opened, type: INT64, nulls: 0, distinct: 735 }
+      - { name: accounts_closed, type: INT64, nulls: 0, distinct: 416 }
+      - { name: interest_expense_mtd, type: NUMERIC, nulls: 0, distinct: 371955 }
+  - name: fact_loan_origination
+    role: fact
+    rows: 200000
+    columns:
+      - { name: loan_id, type: INT64, nulls: 0, distinct: 200000 }
+      - { name: origination_date, type: DATE, nulls: 0, distinct: 1096 }
+      - { name: customer_id, type: INT64, nulls: 0, distinct: 48187 }
+      - { name: branch_id, type: INT64, nulls: 0, distinct: 1000 }
+      - { name: market_id, type: INT64, nulls: 0, distinct: 30 }
+      - { name: product_id, type: INT64, nulls: 0, distinct: 6 }
+      - { name: loan_amount, type: NUMERIC, nulls: 0, distinct: 198799 }
+      - { name: current_balance, type: NUMERIC, nulls: 0, distinct: 198711 }
+      - { name: interest_rate_pct, type: FLOAT64, nulls: 0, distinct: 4692 }
+      - { name: term_months, type: INT64, nulls: 0, distinct: 4 }
+      - { name: fico_band, type: STRING, nulls: 0, distinct: 5, values: ["640-679", "680-719", "720-759", "760+", "<640"] }
+      - { name: ltv, type: FLOAT64, nulls: 0, distinct: 693 }
+      - { name: vintage, type: STRING, nulls: 0, distinct: 36 }
+      - { name: delinquency_status, type: STRING, nulls: 0, distinct: 4, values: ["30 DPD", "60 DPD", "90+ DPD", "Current"] }
+      - { name: days_past_due, type: INT64, nulls: 0, distinct: 122 }
+  - name: fact_payment_transaction
+    role: fact
+    rows: 538223
+    columns:
+      - { name: payment_id, type: INT64, nulls: 0, distinct: 538223 }
+      - { name: activity_month, type: DATE, nulls: 0, distinct: 36 }
+      - { name: customer_id, type: INT64, nulls: 0, distinct: 5963 }
+      - { name: product_id, type: INT64, nulls: 0, distinct: 8 }
+      - { name: transaction_count, type: INT64, nulls: 0, distinct: 29654 }
+      - { name: payment_volume_usd, type: NUMERIC, nulls: 0, distinct: 538092 }
+      - { name: fee_revenue_usd, type: NUMERIC, nulls: 0, distinct: 363197 }
+  - name: fact_loan_facility_snapshot
+    role: fact
+    rows: 244072
+    columns:
+      - { name: facility_snapshot_id, type: INT64, nulls: 0, distinct: 244072 }
+      - { name: snapshot_date, type: DATE, nulls: 0, distinct: 36 }
+      - { name: facility_id, type: INT64, nulls: 0, distinct: 8000 }
+      - { name: customer_id, type: INT64, nulls: 0, distinct: 5026 }
+      - { name: product_id, type: INT64, nulls: 0, distinct: 6 }
+      - { name: lob_id, type: INT64, nulls: 0, distinct: 2 }
+      - { name: risk_rating_id, type: INT64, nulls: 0, distinct: 5 }
+      - { name: commitment_amount, type: NUMERIC, nulls: 0, distinct: 8000 }
+      - { name: outstanding_balance, type: NUMERIC, nulls: 0, distinct: 208678 }
+      - { name: undrawn_amount, type: NUMERIC, nulls: 0, distinct: 207211 }
+      - { name: interest_income_mtd, type: NUMERIC, nulls: 0, distinct: 206179 }
+      - { name: nim_bps, type: FLOAT64, nulls: 0, distinct: 3392 }
+      - { name: is_nonperforming, type: BOOL, nulls: 0, distinct: 2, values: ["False", "True"] }

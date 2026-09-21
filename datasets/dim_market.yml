@@ -1,0 +1,16 @@
+unique_name: dim_market
+object_type: dataset
+label: dim_market
+connection_id: bank_enterprise_performance_bq
+table: dim_market
+columns:
+- name: market_id
+  data_type: long
+- name: market_name
+  data_type: string
+- name: state
+  data_type: string
+- name: region
+  data_type: string
+description: Conformed geographic market dimension. region -&gt; state -&gt; market across the bank&#39;s
+  15-state footprint.

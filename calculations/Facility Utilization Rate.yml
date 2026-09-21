@@ -1,0 +1,7 @@
+unique_name: Facility Utilization Rate
+object_type: metric_calc
+label: Facility Utilization Rate
+description: Drawn outstanding as a share of total committed credit.
+expression: CASE WHEN ISEMPTY([Measures].[Commitment Amount]) THEN NULL ELSE [Measures].[Outstanding Balance]
+  / [Measures].[Commitment Amount] END
+format: '#,##0.0%'

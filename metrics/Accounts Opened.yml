@@ -1,0 +1,9 @@
+unique_name: Accounts Opened
+object_type: metric
+label: Accounts Opened
+dataset: fact_deposit_snapshot
+column: accounts_opened
+description: New deposit accounts opened during the period. Additive period flow.
+unrelated_dimensions_handling: repeat
+calculation_method: sum
+format: '#,##0'

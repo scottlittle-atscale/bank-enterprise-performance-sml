@@ -1,0 +1,9 @@
+unique_name: Interest Expense
+object_type: metric
+label: Interest Expense
+dataset: fact_deposit_snapshot
+column: interest_expense_mtd
+description: Interest paid on deposits during the month. Additive period flow.
+unrelated_dimensions_handling: repeat
+calculation_method: sum
+format: $#,##0

@@ -1,0 +1,44 @@
+unique_name: fact_loan_origination
+object_type: dataset
+label: fact_loan_origination
+connection_id: bank_enterprise_performance_bq
+table: fact_loan_origination
+columns:
+- name: loan_id
+  data_type: long
+- name: origination_date
+  data_type: date
+- name: customer_id
+  data_type: long
+- name: branch_id
+  data_type: long
+- name: market_id
+  data_type: long
+- name: product_id
+  data_type: long
+- name: loan_amount
+  data_type: decimal
+- name: current_balance
+  data_type: decimal
+- name: interest_rate_pct
+  data_type: double
+- name: term_months
+  data_type: long
+- name: fico_band
+  data_type: string
+- name: ltv
+  data_type: double
+- name: vintage
+  data_type: string
+- name: delinquency_status
+  data_type: string
+- name: days_past_due
+  data_type: long
+- name: is_delinquent
+  data_type: long
+  sql: CASE WHEN days_past_due > 0 THEN 1 ELSE 0 END
+- name: loan_count
+  data_type: long
+  sql: '1'
+description: Consumer Lending (Consumer Bank). One row per loan booked (mortgage, HELOC, home-equity,
+  indirect auto/marine). delinquency_status and current_balance are as-of the current month.
